@@ -25,9 +25,13 @@ int main( int argc, char* args[] )
 		exit(1);
 	} 
 
-	//Initialize points list
-	struct points *head_point_ptr = get_new_point();
-	struct points *p_ptr, *last_ptr = NULL;
+	// Initialize Head List Pointer
+	struct points *head_point_ptr = NULL;
+	for ( int i=0; i < 128; i++) {
+		new_point( &head_point_ptr );
+	}
+
+	struct points *p_ptr, *tmp_ptr = NULL;
 
 	int quit = 0;
 	while (!quit) {
@@ -37,19 +41,14 @@ int main( int argc, char* args[] )
 
 		// DO SOME SHIT
 		p_ptr = head_point_ptr;
-		last_ptr = NULL;
 		// int count = 0;
 		while (p_ptr != NULL){
 			// printf("p_ptr: x, y, z == %i %li: %i, %i, %i\n", count++, (long int) p_ptr, p_ptr->x, p_ptr->y, p_ptr->z);
 			if ( p_ptr->z == 0 ){
 				// Delete point that has reached us.
-				if ( last_ptr == NULL ) {
-					head_point_ptr = p_ptr->next;
-				} else {
-					last_ptr->next = p_ptr->next;
-				}
+				tmp_ptr = p_ptr;
 				p_ptr = p_ptr->next;
-				free(p_ptr);
+				kill_point( &head_point_ptr, tmp_ptr );
 				continue;
 			} else {
 				// Draw the point
@@ -58,20 +57,12 @@ int main( int argc, char* args[] )
 				y = p_ptr->y / p_ptr->z;
 				if ( abs(x) >= WIDTH/2 || abs(y) >= HEIGHT/2 ){
 					// Delete point that is off screen
-					if ( last_ptr == NULL ) {
-						head_point_ptr = p_ptr->next;
-						last_ptr = p_ptr;
-						p_ptr = p_ptr->next;
-						free(last_ptr);
-						last_ptr = NULL;
-					} else {
-						last_ptr->next = p_ptr->next;
-						free(p_ptr);
-						p_ptr = last_ptr->next;
-					}
+					tmp_ptr = p_ptr;
+					p_ptr = p_ptr->next;
+					kill_point( &head_point_ptr, tmp_ptr );
 					continue;
 				} else {
-					int m = 255*((MAX_Z-p_ptr->z)*2)/MAX_Z;
+					int m = 255*((MAX_Z-p_ptr->z)*4)/MAX_Z;
 					if ( m>255 ){ m=255; }
 					Uint32 p = SDL_MapRGB(
 							screen->format,
@@ -82,15 +73,13 @@ int main( int argc, char* args[] )
 
 					( (Uint32 *) screen->pixels)[LOC(x, y)] = p;
 					p_ptr->z = p_ptr->z - 1;
-					last_ptr = p_ptr;
 					p_ptr = p_ptr->next;
 				}
 			}
 		}
 
 		for ( int c=0; c< rand()%128;c++){
-			last_ptr->next = get_new_point();
-			last_ptr = last_ptr->next;
+			new_point(&head_point_ptr);
 		}
 
 		//Update Screen
@@ -119,7 +108,7 @@ int main( int argc, char* args[] )
 	return 0;
 }
 
-struct points* get_new_point()
+void new_point( struct points** head )
 {
 
 	struct points* p_ptr = malloc(sizeof(struct points));
@@ -128,11 +117,35 @@ struct points* get_new_point()
 	p_ptr->y    = (rand()%HEIGHT - (HEIGHT/2)) * MAX_Z;
 	p_ptr->z    = MAX_Z;
 
-	p_ptr->r = rand()%256;
-	p_ptr->g = rand()%256;
-	p_ptr->b = rand()%256;
+	p_ptr->r = rand()%128 + 128;
+	p_ptr->g = rand()%128 + 128;
+	p_ptr->b = rand()%128 + 128;
 
-	p_ptr->next = NULL;
+	p_ptr->next = *head;
+	*head = p_ptr;
 
-	return p_ptr;
+	return;
+}
+
+void kill_point( struct points** head, struct points* to_kill )
+{
+
+	struct points *p_ptr, *last_ptr = NULL;
+
+	for ( p_ptr = *head; p_ptr != NULL; p_ptr = p_ptr->next)
+	{
+		if (p_ptr == to_kill)
+		{
+			if (last_ptr == NULL)
+			{
+				*head = p_ptr->next;
+			} else {
+				last_ptr-> next = p_ptr->next;
+			}
+			free(p_ptr);
+		} else {
+			last_ptr = p_ptr;
+		}
+	}
+	return;
 }

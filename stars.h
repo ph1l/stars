@@ -1,8 +1,8 @@
-#define WIDTH 720
-#define HEIGHT 480
+#define WIDTH 1024
+#define HEIGHT 768
 
 #define MAX_Z 512
-#define FRAME_DELAY 5
+#define FRAME_DELAY 2
 
 struct points
 {
@@ -11,4 +11,5 @@ struct points
 	struct points *next;
 };
 
-struct points* get_new_point();
+void new_point( struct points** );
+void kill_point( struct points**, struct points* );
