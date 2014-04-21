@@ -1,6 +1,8 @@
 //Include SDL functions and datatypes
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
 #include "SDL/SDL.h"
 #include "stars.h"
 
@@ -25,6 +27,9 @@ int main( int argc, char* args[] )
 		exit(1);
 	} 
 
+	time_t start_t = time(NULL);
+	time_t cur_t = NULL;
+
 	// Initialize Head List Pointer
 	struct points *head_point_ptr = NULL;
 	for ( int i=0; i < 128; i++) {
@@ -33,6 +38,7 @@ int main( int argc, char* args[] )
 
 	struct points *p_ptr, *tmp_ptr = NULL;
 
+	int frames = 0;
 	int quit = 0;
 	while (!quit) {
 
@@ -41,7 +47,7 @@ int main( int argc, char* args[] )
 
 		// DO SOME SHIT
 		p_ptr = head_point_ptr;
-		// int count = 0;
+		int count = 0;
 		while (p_ptr != NULL){
 			// printf("p_ptr: x, y, z == %i %li: %i, %i, %i\n", count++, (long int) p_ptr, p_ptr->x, p_ptr->y, p_ptr->z);
 			if ( p_ptr->z == 0 ){
@@ -62,6 +68,7 @@ int main( int argc, char* args[] )
 					kill_point( &head_point_ptr, tmp_ptr );
 					continue;
 				} else {
+					count++;
 					int m = 255*((MAX_Z-p_ptr->z)*4)/MAX_Z;
 					if ( m>255 ){ m=255; }
 					Uint32 p = SDL_MapRGB(
@@ -77,6 +84,12 @@ int main( int argc, char* args[] )
 				}
 			}
 		}
+		frames++;
+		cur_t = time(NULL);
+		if (cur_t > start_t)
+		{
+			printf("fps, points: = %i, %i\n", (int) frames/(cur_t-start_t), count);
+		}
 
 		for ( int c=0; c< rand()%128;c++){
 			new_point(&head_point_ptr);
@@ -86,7 +99,7 @@ int main( int argc, char* args[] )
 		SDL_Flip( screen );
 
 		//Pause
-		SDL_Delay( FRAME_DELAY );
+		//SDL_Delay( FRAME_DELAY );
 
 		while(SDL_PollEvent(&event))
         	{
