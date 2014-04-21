@@ -117,9 +117,9 @@ void new_point( struct points** head )
 	p_ptr->y    = (rand()%HEIGHT - (HEIGHT/2)) * MAX_Z;
 	p_ptr->z    = MAX_Z;
 
-	p_ptr->r = rand()%128 + 128;
-	p_ptr->g = rand()%128 + 128;
-	p_ptr->b = rand()%128 + 128;
+	p_ptr->r = rand()%256;
+	p_ptr->g = rand()%256;
+	p_ptr->b = rand()%256;
 
 	p_ptr->next = *head;
 	*head = p_ptr;
