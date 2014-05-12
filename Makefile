@@ -1,4 +1,4 @@
-CFLAGS=-Wall -std=gnu99 -g
+CFLAGS=-Wall -std=gnu99 #-g -DDEBUG
 
 all: stars
 
