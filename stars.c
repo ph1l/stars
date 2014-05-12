@@ -169,7 +169,7 @@ int main( int argc, char* args[] )
 		SDL_Flip( screen );
 
 		//Pause
-		//SDL_Delay( FRAME_DELAY );
+		SDL_Delay( FRAME_DELAY );
 
 		while(SDL_PollEvent(&event))
         	{
