@@ -108,16 +108,8 @@ int process_point( struct universe *u, struct return_point *rp )
 				return(-1);
 			}
 		} else {
-			int m = 255*((u->depth-u->iterator->z)*4)/u->depth;
-			if ( m>255 ){ m=255; }
-			/* Uint32 p = SDL_MapRGB(
-					screen->format,
-					u->iterator->r*m/255,
-					u->iterator->g*m/255,
-					u->iterator->b*m/255
-				);
-			( (Uint32 *) screen->pixels)[LOC(x, y)] = p;
-			*/
+			int m = OPACITY_MAX*((u->depth-u->iterator->z)*4)/u->depth;
+			if ( m>=OPACITY_MAX ){ m=OPACITY_MAX-1; }
 			u->iterator->z = u->iterator->z - 1;
 			#ifdef DEBUG
 			printf("RETURN POINT: %lx\n", (long unsigned int )u->iterator);
@@ -125,6 +117,7 @@ int process_point( struct universe *u, struct return_point *rp )
 			u->iterator = u->iterator->next;
 			rp->x = x;
 			rp->y = y;
+			rp->opacity = m;
 			if ( u->iterator == NULL ) {
 				return(0);
 			} else {
