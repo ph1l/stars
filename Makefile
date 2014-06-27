@@ -1,9 +1,10 @@
 CFLAGS=-Wall -std=gnu99 #-g -DDEBUG
 
-all: stars
+all: sstars
 
-stars: stars.c
-	gcc -o stars stars.c -lSDL $(CFLAGS)
+sstars: sstars.c
+	gcc -o sstars sstars.c -lSDL $(CFLAGS)
+
 
 clean:
-	rm -f stars
+	rm -f *.o sstars
