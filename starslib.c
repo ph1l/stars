@@ -62,7 +62,7 @@ void kill_point( struct universe* universe, struct points* to_kill )
 			{
 				universe->points = p_ptr->next;
 			} else {
-				last_ptr-> next = p_ptr->next;
+				last_ptr->next = p_ptr->next;
 			}
 			free(p_ptr);
 		} else {
