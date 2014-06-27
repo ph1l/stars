@@ -5,6 +5,11 @@
 
 #include "starslib.h"
 
+#define Z_START 1024
+#define U_SLEEP 25000
+#define SPAWN_PERCENT 25
+#define POSSIBLE_SPAWNS 1
+
 int main()
 {
 	// Open the display
@@ -28,7 +33,7 @@ int main()
 	// Initialize the stars lib
 
 	struct universe* u;
-	new_universe( &u, w_attr.width, w_attr.height, 512 );
+	new_universe( &u, w_attr.width, w_attr.height, Z_START );
 
 	FRAME:
 	XClearArea( dpy, w, 0, 0, w_attr.width, w_attr.height, 0 );
@@ -41,8 +46,10 @@ int main()
 		}
 	}
 	XFlush(dpy);
-	for ( int c=0; c<1; c++ ){ new_point( u ); }
-	usleep(15000);
+	if( rand()%100 < SPAWN_PERCENT ){
+		for ( int c=0; c < (rand()%POSSIBLE_SPAWNS)+1; c++ ){ new_point( u ); }
+	}
+	usleep(U_SLEEP);
 	goto FRAME;
 	return 0;
 }
