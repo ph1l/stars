@@ -88,7 +88,9 @@ int process_point( struct universe *u, struct return_point *rp )
 
 	if ( u->iterator->z == 0 ){
 		// Delete point that has reached us.
-		kill_point( u, u->iterator );
+		struct points *tmp = u->iterator;
+		u->iterator = u->iterator->next;
+		kill_point( u, tmp );
 		return(-1);
 	} else {
 		// Plot the point

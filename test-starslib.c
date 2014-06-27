@@ -3,9 +3,12 @@
 #include "starslib.h"
 
 int main() {
+	int f_count=0;
 	struct universe* u;
 	new_universe( &u, 1024, 768, 512 );
 	FRAME:
+	f_count++;
+	printf("FRAME: %i\n", f_count);
 	for (;;) {
 		struct return_point rp;
 		int return_code = process_point( u, &rp  );
