@@ -1,6 +1,7 @@
 #include <X11/Xlib.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #include "starslib.h"
@@ -26,9 +27,30 @@ int main()
 
 	// Create a "Graphics Context"
 
-	int whiteColor = WhitePixel(dpy, DefaultScreen(dpy));
-	GC gc = XCreateGC(dpy, w, 0, NULL);
-	XSetForeground(dpy, gc, whiteColor);
+	Colormap colormap;
+	colormap = DefaultColormap(dpy, DefaultScreen(dpy));
+
+	GC gc[OPACITY_MAX];
+	XColor screen_color[OPACITY_MAX];
+	XColor exact_color[OPACITY_MAX];
+	#define MAX_COLOR_NAME_SIZE 256
+	char *color_name[OPACITY_MAX];
+
+	for (int i=0; i < OPACITY_MAX; i++) {
+		color_name[i] = malloc(MAX_COLOR_NAME_SIZE+1);
+		snprintf( color_name[i], MAX_COLOR_NAME_SIZE,
+				"rgb:%02x/%02x/%02x",
+				255*(i+1)/OPACITY_MAX,
+				255*(i+1)/OPACITY_MAX,
+				255*(i+1)/OPACITY_MAX
+			);
+		#ifdef DEBUG
+		printf("Setup Color %i: %s\n", i, color_name[i]);
+		#endif
+		assert( XAllocNamedColor(dpy, colormap, color_name[i], &screen_color[i], &exact_color[i] ) );
+		gc[i] = XCreateGC(dpy, w, 0, NULL);
+		XSetForeground(dpy, gc[i], screen_color[i].pixel);
+	}
 
 	// Initialize the stars lib
 
@@ -42,7 +64,7 @@ int main()
 		int return_code = process_point( u, &rp  );
 		if (return_code == 0) { break; }
 		if (return_code == 1) {
-			XDrawPoint( dpy, w, gc, rp.x + (w_attr.width/2), rp.y + (w_attr.height/2));
+			XDrawPoint( dpy, w, gc[rp.opacity], rp.x + (w_attr.width/2), rp.y + (w_attr.height/2));
 		}
 	}
 	XFlush(dpy);
