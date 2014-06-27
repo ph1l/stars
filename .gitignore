@@ -1,1 +1,5 @@
-stars
+*.o
+*.swp
+sstars
+xstars
+test-starslib
