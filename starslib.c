@@ -19,6 +19,7 @@ void new_universe( struct universe** u, int width, int height, int depth )
 	(*u)->depth  = depth;
 
 	(*u)->iterator  = NULL;
+	(*u)->points  = NULL;
 	#ifdef DEBUG
 	printf("NEW UNIVERSE: %lx: (%i,%i,%i)\n", (long unsigned int )(*u), (*u)->width, (*u)->height, (*u)->depth);
 	#endif
