@@ -1,0 +1,10 @@
+stars
+-----
+
+ This repo contains code related to simulate moving through a starfield in C.
+I originally wrote 'stars,' (now called sstars) using SDL. Recently, I moved
+the logic for generating and rendering a starfield onto a 2D plane into a
+library and built xstars. xstars is an X client app that draws a starfield
+into the root window.
+
+
