@@ -2,8 +2,8 @@ CFLAGS=-Wall -std=gnu99 #-g -DDEBUG
 
 all: sstars xstars
 
-sstars: sstars.c
-	gcc -o sstars sstars.c -lSDL $(CFLAGS)
+sstars: starslib.o sstars.o
+	gcc -o sstars starslib.o sstars.o -lSDL $(CFLAGS)
 
 xstars: starslib.o xstars.o
 	gcc -o xstars starslib.o xstars.o -lX11 $(CFLAGS)
