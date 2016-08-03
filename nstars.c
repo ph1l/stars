@@ -13,22 +13,21 @@
 int main(int argc, char *argv[])
 {
 	WINDOW *win_stars, *win_status, *win_input;
-	int c;
-	int quit=0;
+	int c, x;
+	int quit = 0;
 
 	char cmd_buf[MAX_CMD_BUF_LEN+1] = "";
 	char *cmd_buf_p = (char *) &cmd_buf;
-	int buf_len=0;
-	int cur_loc=0;
-	int x;
+	int buf_len = 0;
+	int cur_loc = 0;
 
 	char *cmd_hist[MAX_CMD_HIST_LEN];
 	cmd_hist[0] = NULL;
 	int cmd_hist_loc = -1;
 
 	struct universe* u;
-	int frames=0;
-	int sleep_time=3840;
+	int frames = 0;
+	int sleep_time = 3840;
 
 	initscr();		/* start curses mode */
 	raw();			/* disable line buffering */
@@ -44,10 +43,10 @@ int main(int argc, char *argv[])
 	win_status = newwin(1, COLS, LINES-2, 0);
 	win_input = newwin(1, COLS, LINES-1, 0);
 
-	while(quit == 0){
+	while (quit == 0) {
 		// draw stars
 		wclear(win_stars);
-		for (;;){
+		for (;;) {
 			struct return_point rp;
 			int return_code = process_point(u, &rp);
 			if (return_code == 0) break;
@@ -56,26 +55,28 @@ int main(int argc, char *argv[])
 		}
 		frames++;
 		wrefresh(win_stars);
-		for (c=0; c< rand()%2;c++)
+		for (c=0; c < rand()%2; c++)
 			new_point(u);
 		usleep(sleep_time);
 
 		// update status line
-		mvwprintw(win_status,0,0,"[Console] f:%06d s:%06d", frames, sleep_time);
+		mvwprintw(win_status, 0, 0, "[Console] f:%06d s:%06d", frames, sleep_time);
 		wrefresh(win_status);
 
 		// redraw input line
 		buf_len = strlen(cmd_buf_p);
 		mvwprintw(win_input, 0, 0, INPUT_PROMPT);
 		mvwprintw(win_input, 0, PROMPT_LEN, "%s", &cmd_buf);
-		for (x=PROMPT_LEN+buf_len; x<=COLS; x++)
+		for (x=PROMPT_LEN+buf_len; x <= COLS; x++)
 			mvwaddch(win_input, 0, x, ' ');
 		mvwchgat(win_input, 0, PROMPT_LEN+cur_loc, 1, A_REVERSE, 1, NULL);
 		wrefresh(win_input);
 
 		c = getch();
-		if ( c == -1 ) continue;
-		switch(c){
+
+		if (c == -1) continue;
+
+		switch (c) {
 			/* ALT ESC? Doesn't work...
 			case 27:
 				c = getch();
@@ -86,10 +87,10 @@ int main(int argc, char *argv[])
 			case 258:					/* Down */
 				if (cmd_hist_loc > -1){
 					cmd_hist_loc--;
-					if (cmd_hist_loc == -1){
+					if (cmd_hist_loc == -1) {
 						cmd_buf[0] = '\0';
 						cur_loc=0;
-					}else{
+					} else {
 						strncpy(cmd_buf_p, cmd_hist[cmd_hist_loc], MAX_CMD_BUF_LEN);
 						cur_loc=strlen(cmd_buf_p);
 					}
@@ -99,13 +100,18 @@ int main(int argc, char *argv[])
 				break;
 			case 259:					/* Up */
 				if (
-				   (cmd_hist_loc == -1 && cmd_hist[0] != NULL) ||
-				   (cmd_hist_loc >=0 && cmd_hist_loc < (MAX_CMD_HIST_LEN-1) &&  cmd_hist[cmd_hist_loc+1] != NULL)
-				){
+					(cmd_hist_loc == -1 && cmd_hist[0] != NULL)
+					||
+					(
+						cmd_hist_loc >=0 &&
+						cmd_hist_loc < (MAX_CMD_HIST_LEN-1) &&
+						cmd_hist[cmd_hist_loc+1] != NULL
+					)
+				) {
 					cmd_hist_loc++;
-					strncpy(cmd_buf_p, cmd_hist[cmd_hist_loc],MAX_CMD_BUF_LEN);
+					strncpy(cmd_buf_p, cmd_hist[cmd_hist_loc], MAX_CMD_BUF_LEN);
 					cur_loc=strlen(cmd_buf_p);
-				}else{
+				} else {
 					beep();
 				}
 				break;
@@ -123,7 +129,7 @@ int main(int argc, char *argv[])
 				break;
 			case 8:						/* Ctrl-H */
 			case 263:					/* Backspace */
-				if (cur_loc > 0){
+				if (cur_loc > 0) {
 					for (x=cur_loc; x <= buf_len; x++)
 						cmd_buf[x-1] = cmd_buf[x];
 					cur_loc--;
@@ -132,7 +138,7 @@ int main(int argc, char *argv[])
 				}
 				break;
 			case 10:					/* Enter */
-				if (strcmp(cmd_buf_p,"/quit") == 0){
+				if (strncmp(cmd_buf_p, "/quit", MAX_CMD_BUF_LEN) == 0) {
 					quit = 1;
 				} else if (strncmp(cmd_buf_p, "/sleep ", 7) == 0) {
 					sscanf(cmd_buf_p, "/sleep %d", &sleep_time);
@@ -140,10 +146,10 @@ int main(int argc, char *argv[])
 				/* save command to history */
 				if (	cmd_hist[0] == NULL ||
 					strncmp(cmd_buf_p, cmd_hist[0], MAX_CMD_BUF_LEN) != 0
-					){
+					) {
 
-					for (x=0; cmd_hist[x] != NULL && x <(MAX_CMD_HIST_LEN-1); x++);
-					if (x==(MAX_CMD_HIST_LEN-1))
+					for (x=0; cmd_hist[x] != NULL && x < (MAX_CMD_HIST_LEN-1); x++);
+					if (x == (MAX_CMD_HIST_LEN-1))
 						free(cmd_hist[x]);
 					else
 						cmd_hist[x+1] = NULL;
@@ -155,11 +161,11 @@ int main(int argc, char *argv[])
 				
 				/* reset command buffer */
 				cmd_buf[0] = '\0';
-				cur_loc=0;
+				cur_loc = 0;
 				cmd_hist_loc = -1;
 				break;
 			default:					/* Everything Else! */
-				if (buf_len == MAX_CMD_BUF_LEN){
+				if (buf_len == MAX_CMD_BUF_LEN) {
 					beep();
 					break;
 				}
