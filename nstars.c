@@ -8,6 +8,7 @@
 #define INPUT_PROMPT ">"
 #define PROMPT_LEN 1
 #define MAX_CMD_BUF_LEN 16
+#define MAX_CMD_HIST_LEN 4
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,10 @@ int main(int argc, char *argv[])
 	int buf_len=0;
 	int cur_loc=0;
 	int x;
+
+	char *cmd_hist[MAX_CMD_HIST_LEN];
+	cmd_hist[0] = NULL;
+	int cmd_hist_loc = -1;
 
 	struct universe* u;
 	int frames=0;
@@ -79,10 +84,30 @@ int main(int argc, char *argv[])
 				break;
 			*/
 			case 258:					/* Down */
-				beep();
+				if (cmd_hist_loc > -1){
+					cmd_hist_loc--;
+					if (cmd_hist_loc == -1){
+						cmd_buf[0] = '\0';
+						cur_loc=0;
+					}else{
+						strncpy(cmd_buf_p, cmd_hist[cmd_hist_loc], MAX_CMD_BUF_LEN);
+						cur_loc=strlen(cmd_buf_p);
+					}
+				} else {
+					beep();
+				}
 				break;
 			case 259:					/* Up */
-				beep();
+				if (
+				   (cmd_hist_loc == -1 && cmd_hist[0] != NULL) ||
+				   (cmd_hist_loc >=0 && cmd_hist_loc < (MAX_CMD_HIST_LEN-1) &&  cmd_hist[cmd_hist_loc+1] != NULL)
+				){
+					cmd_hist_loc++;
+					strncpy(cmd_buf_p, cmd_hist[cmd_hist_loc],MAX_CMD_BUF_LEN);
+					cur_loc=strlen(cmd_buf_p);
+				}else{
+					beep();
+				}
 				break;
 			case 260:					/* Left */
 				if (cur_loc > 0)
@@ -112,8 +137,26 @@ int main(int argc, char *argv[])
 				} else if (strncmp(cmd_buf_p, "/sleep ", 7) == 0) {
 					sscanf(cmd_buf_p, "/sleep %d", &sleep_time);
 				}
+				/* save command to history */
+				if (	cmd_hist[0] == NULL ||
+					strncmp(cmd_buf_p, cmd_hist[0], MAX_CMD_BUF_LEN) != 0
+					){
+
+					for (x=0; cmd_hist[x] != NULL && x <(MAX_CMD_HIST_LEN-1); x++);
+					if (x==(MAX_CMD_HIST_LEN-1))
+						free(cmd_hist[x]);
+					else
+						cmd_hist[x+1] = NULL;
+					for (;x > 0; x--)
+						cmd_hist[x] = cmd_hist[x-1];
+
+					cmd_hist[0] = strndup(cmd_buf_p, MAX_CMD_BUF_LEN);
+				}
+				
+				/* reset command buffer */
 				cmd_buf[0] = '\0';
 				cur_loc=0;
+				cmd_hist_loc = -1;
 				break;
 			default:					/* Everything Else! */
 				if (buf_len == MAX_CMD_BUF_LEN){
