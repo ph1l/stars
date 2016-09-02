@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
 					cmd_hist[0] = strndup(cmd_buf_p, MAX_CMD_BUF_LEN);
 				}
-				
+
 				/* reset command buffer */
 				cmd_buf[0] = '\0';
 				cur_loc = 0;
