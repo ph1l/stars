@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 					quit = 1;
 				break;
 			*/
-			case 258:					/* Down */
+			case KEY_DOWN:
 				if (cmd_hist_loc > -1){
 					cmd_hist_loc--;
 					if (cmd_hist_loc == -1) {
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 					beep();
 				}
 				break;
-			case 259:					/* Up */
+			case KEY_UP:
 				if (
 					(cmd_hist_loc == -1 && cmd_hist[0] != NULL)
 					||
@@ -135,20 +135,20 @@ int main(int argc, char *argv[])
 					beep();
 				}
 				break;
-			case 260:					/* Left */
+			case KEY_LEFT:
 				if (cur_loc > 0)
 					cur_loc--;
 				else
 					beep();
 				break;
-			case 261:					/* Right */
+			case KEY_RIGHT:
 				if (cur_loc < buf_len)
 					cur_loc++;
 				else
 					beep();
 				break;
 			case 8:						/* Ctrl-H */
-			case 263:					/* Backspace */
+			case KEY_BACKSPACE:
 				if (cur_loc > 0) {
 					for (x=cur_loc; x <= buf_len; x++)
 						cmd_buf[x-1] = cmd_buf[x];
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 					beep();
 				}
 				break;
-			case 10:					/* Enter */
+			case KEY_ENTER:
 				if (strncmp(cmd_buf_p, "/quit", MAX_CMD_BUF_LEN) == 0) {
 					quit = 1;
 				} else if (strncmp(cmd_buf_p, "/sleep ", 7) == 0) {
