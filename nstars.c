@@ -157,6 +157,8 @@ int main(int argc, char *argv[])
 					beep();
 				}
 				break;
+			case '\n':					/* Line Feed (0x0A) */
+			case '\r':					/* Carriage Return (0x0D) */
 			case KEY_ENTER:
 				if (strncmp(cmd_buf_p, "/quit", MAX_CMD_BUF_LEN) == 0) {
 					quit = 1;
