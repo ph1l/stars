@@ -30,6 +30,8 @@
 #define MAX_CMD_BUF_LEN 16
 #define MAX_CMD_HIST_LEN 4
 
+#define DEFAULT_STAR '.'
+
 int main(int argc, char *argv[])
 {
 	WINDOW *win_stars, *win_status, *win_input;
@@ -48,7 +50,7 @@ int main(int argc, char *argv[])
 	struct universe* u;
 	int frames = 0;
 	int sleep_time = 3840;
-	char star_char = '*';
+	char star_char = DEFAULT_STAR;
 
 	initscr();		/* start curses mode */
 	raw();			/* disable line buffering */
