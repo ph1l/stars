@@ -30,6 +30,8 @@
 #define MAX_CMD_BUF_LEN 16
 #define MAX_CMD_HIST_LEN 4
 
+#define DEFAULT_STAR '.'
+
 int main(int argc, char *argv[])
 {
 	WINDOW *win_stars, *win_status, *win_input;
@@ -48,6 +50,7 @@ int main(int argc, char *argv[])
 	struct universe* u;
 	int frames = 0;
 	int sleep_time = 3840;
+	char star_char = DEFAULT_STAR;
 
 	initscr();		/* start curses mode */
 	raw();			/* disable line buffering */
@@ -71,7 +74,7 @@ int main(int argc, char *argv[])
 			int return_code = process_point(u, &rp);
 			if (return_code == 0) break;
 			if (return_code == 1)
-				mvwprintw(win_stars,rp.y+((LINES-2)/2),rp.x+(COLS/2),"*");
+				mvwprintw(win_stars,rp.y+((LINES-2)/2),rp.x+(COLS/2),"%c",star_char);
 		}
 		frames++;
 		wrefresh(win_stars);
@@ -164,6 +167,10 @@ int main(int argc, char *argv[])
 					quit = 1;
 				} else if (strncmp(cmd_buf_p, "/sleep ", 7) == 0) {
 					sscanf(cmd_buf_p, "/sleep %d", &sleep_time);
+				} else if (	strlen(cmd_buf_p) == 7 &&
+						strncmp(cmd_buf_p, "/char ", 6) == 0
+						) {
+					sscanf(cmd_buf_p, "/char %c", &star_char);
 				}
 				/* save command to history */
 				if (	cmd_hist[0] == NULL ||
