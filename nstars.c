@@ -32,10 +32,13 @@
 
 #define DEFAULT_STAR '.'
 
+#define XSTR(s) #s
+#define STR(s) XSTR(s)
 #define HELP "\
 Usage: %s [OPTION]...\n\
 Starfield with ncurses frontend\n\
 \n\
+  -s                       star character (default " STR(DEFAULT_STAR) ")\n\
   -h                       display this help and exit\n\
 "
 
@@ -87,8 +90,11 @@ int main(int argc, char *argv[])
 
 	// parse command-line options
 	int opt;
-	while ((opt=getopt(argc, argv, "h")) != -1) {
+	while ((opt=getopt(argc, argv, "s:h")) != -1) {
 		switch (opt) {
+			case 's':
+				star_char = *optarg;
+				break;
 			case 'h':
 				fprintf(stderr, HELP, argv[0]);
 				exit(EXIT_SUCCESS);
