@@ -32,6 +32,13 @@
 
 #define DEFAULT_STAR '.'
 
+#define HELP "\
+Usage: %s [OPTION]...\n\
+Starfield with ncurses frontend\n\
+\n\
+  -h                       display this help and exit\n\
+"
+
 int main(int argc, char *argv[])
 {
 	WINDOW *win_stars, *win_status, *win_input;
@@ -51,6 +58,19 @@ int main(int argc, char *argv[])
 	int frames = 0;
 	int sleep_time = 3840;
 	char star_char = DEFAULT_STAR;
+
+	// parse command-line options
+	int opt;
+	while ((opt=getopt(argc, argv, "h")) != -1) {
+		switch (opt) {
+			case 'h':
+				fprintf(stderr, HELP, argv[0]);
+				exit(EXIT_SUCCESS);
+			default:
+				fprintf(stderr, HELP, argv[0]);
+				exit(EXIT_FAILURE);
+		}
+	}
 
 	initscr();		/* start curses mode */
 	raw();			/* disable line buffering */
