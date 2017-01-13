@@ -39,6 +39,32 @@ Starfield with ncurses frontend\n\
   -h                       display this help and exit\n\
 "
 
+enum COLORMODE {
+  CM_MONO,
+  CM_256
+} colormode = CM_MONO;
+#define STARCOLOR(opacity) (232+(256-232-1)*opacity/OPACITY_MAX)
+
+void init256color()
+{
+	static bool inited = false;
+
+	if (inited)
+		return;
+
+	if (has_colors() == FALSE) {
+		endwin();
+		fprintf(stderr, "terminal does not support colors");
+		exit(EXIT_FAILURE);
+	}
+
+	start_color();
+	for (int i=0; i<=OPACITY_MAX; i++)
+		init_pair(STARCOLOR(i), STARCOLOR(i), COLOR_BLACK);
+
+	inited = true;
+}
+
 int main(int argc, char *argv[])
 {
 	WINDOW *win_stars, *win_status, *win_input;
@@ -93,8 +119,13 @@ int main(int argc, char *argv[])
 			struct return_point rp;
 			int return_code = process_point(u, &rp);
 			if (return_code == 0) break;
-			if (return_code == 1)
+			if (return_code == 1) {
+				if (colormode == CM_256)
+					wattron(win_stars, COLOR_PAIR(STARCOLOR(rp.opacity)));
 				mvwprintw(win_stars,rp.y+((LINES-2)/2),rp.x+(COLS/2),"%c",star_char);
+				if (colormode == CM_256)
+					wattroff(win_stars, COLOR_PAIR(STARCOLOR(rp.opacity)));
+			}
 		}
 		frames++;
 		wrefresh(win_stars);
@@ -191,6 +222,13 @@ int main(int argc, char *argv[])
 						strncmp(cmd_buf_p, "/char ", 6) == 0
 						) {
 					sscanf(cmd_buf_p, "/char %c", &star_char);
+				} else if (strncmp(cmd_buf_p, "/colormode ", 11) == 0) {
+					if (strcmp(cmd_buf_p+11, "mono") == 0) {
+						colormode = CM_MONO;
+					} else if (strcmp(cmd_buf_p+11, "256") == 0) {
+						init256color();
+						colormode = CM_256;
+					}
 				}
 				/* save command to history */
 				if (	cmd_hist[0] == NULL ||
