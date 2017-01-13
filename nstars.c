@@ -39,13 +39,14 @@ Usage: %s [OPTION]...\n\
 Starfield with ncurses frontend\n\
 \n\
   -s                       star character (default " STR(DEFAULT_STAR) ")\n\
+  -c                       color mode: mono or 256 (default \"mono\")\n\
   -h                       display this help and exit\n\
 "
 
 enum COLORMODE {
   CM_MONO,
   CM_256
-} colormode = CM_MONO;
+};
 #define STARCOLOR(opacity) (232+(256-232-1)*opacity/OPACITY_MAX)
 
 void init256color()
@@ -87,13 +88,21 @@ int main(int argc, char *argv[])
 	int frames = 0;
 	int sleep_time = 3840;
 	char star_char = DEFAULT_STAR;
+	enum COLORMODE colormode = CM_MONO;
 
 	// parse command-line options
 	int opt;
-	while ((opt=getopt(argc, argv, "s:h")) != -1) {
+	while ((opt=getopt(argc, argv, "s:c:h")) != -1) {
 		switch (opt) {
 			case 's':
 				star_char = *optarg;
+				break;
+			case 'c':
+				if (strcmp(optarg, "mono") == 0) {
+					colormode = CM_MONO;
+				} else if (strcmp(optarg, "256") == 0) {
+					colormode = CM_256;
+				}
 				break;
 			case 'h':
 				fprintf(stderr, HELP, argv[0]);
@@ -110,6 +119,8 @@ int main(int argc, char *argv[])
 	noecho();		/* don't echo any input */
 	curs_set(0);		/* set invisible cursor */
 	nodelay(stdscr, TRUE);
+	if (colormode == CM_256)
+		init256color();
 
 	new_universe(&u, COLS, LINES-2, MAX_Z);
 
