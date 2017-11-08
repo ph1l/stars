@@ -1,4 +1,6 @@
 CFLAGS=-Wall -std=gnu99 #-g -DDEBUG
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
 
 all: sstars xstars nstars
 
@@ -16,3 +18,14 @@ test-starslib: starslib.o test-starslib.o
 
 clean:
 	rm -f *.o sstars xstars test-starslib
+
+install:
+	install -d $(DESTDIR)/$(BINDIR)
+	install -m 755 nstars $(DESTDIR)/$(BINDIR)
+	install -m 755 sstars $(DESTDIR)/$(BINDIR)
+	install -m 755 xstars $(DESTDIR)/$(BINDIR)
+
+uninstall:
+	rm $(DESTDIR)/$(BINDIR)/nstars
+	rm $(DESTDIR)/$(BINDIR)/sstars
+	rm $(DESTDIR)/$(BINDIR)/xstars
