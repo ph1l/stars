@@ -3,4 +3,6 @@
 sstars
 xstars
 nstars
-test-starslib
+print-starslib
+starslib-test
+test_results
