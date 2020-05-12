@@ -20,10 +20,10 @@ clean:
 	rm -f *.o sstars xstars nstars print-starslib
 
 install:
-	install -d $(DESTDIR)/$(BINDIR)
-	install -m 755 nstars $(DESTDIR)/$(BINDIR)
-	install -m 755 sstars $(DESTDIR)/$(BINDIR)
-	install -m 755 xstars $(DESTDIR)/$(BINDIR)
+	install -d $(DESTDIR)$(BINDIR)
+	install -m 755 nstars $(DESTDIR)$(BINDIR)
+	install -m 755 sstars $(DESTDIR)$(BINDIR)
+	install -m 755 xstars $(DESTDIR)$(BINDIR)
 
 uninstall:
 	rm $(DESTDIR)/$(BINDIR)/nstars
