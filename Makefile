@@ -17,7 +17,7 @@ print-starslib: starslib.o print-starslib.o
 	gcc -o print-starslib starslib.o print-starslib.o $(CFLAGS)
 
 clean:
-	rm -f *.o sstars xstars print-starslib
+	rm -f *.o sstars xstars nstars print-starslib
 
 install:
 	install -d $(DESTDIR)/$(BINDIR)
