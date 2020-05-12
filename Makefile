@@ -16,8 +16,16 @@ nstars: starslib.o nstars.o
 print-starslib: starslib.o print-starslib.o
 	gcc -o print-starslib starslib.o print-starslib.o $(CFLAGS)
 
+check: starslib-test
+	if [ ! -d test_results ]; then mkdir test_results; fi
+	./starslib-test
+
+starslib-test: starslib-test.o starslib.o
+	gcc -o starslib-test starslib-test.o starslib.o -lcunit $(CFLAGS)
+
 clean:
-	rm -f *.o sstars xstars nstars print-starslib
+	rm -f *.o sstars xstars nstars print-starslib starslib-test
+	rm -rf test_results
 
 install:
 	install -d $(DESTDIR)$(BINDIR)
