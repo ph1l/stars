@@ -13,6 +13,7 @@ pipeline {
   }
   post {
     always {
+      recordIssues enabledForFailure: true, tool: gcc(), qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
       step([$class: 'XUnitPublisher', thresholdMode: 1,
         thresholds: [
           [$class: 'FailedThreshold', unstableThreshold: '1'],
