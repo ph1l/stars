@@ -13,11 +13,11 @@ xstars: starslib.o xstars.o
 nstars: starslib.o nstars.o
 	gcc -o nstars starslib.o nstars.o -lcurses $(CFLAGS)
 
-test-starslib: starslib.o test-starslib.o
-	gcc -o test-starslib starslib.o test-starslib.o $(CFLAGS)
+print-starslib: starslib.o print-starslib.o
+	gcc -o print-starslib starslib.o print-starslib.o $(CFLAGS)
 
 clean:
-	rm -f *.o sstars xstars test-starslib
+	rm -f *.o sstars xstars print-starslib
 
 install:
 	install -d $(DESTDIR)/$(BINDIR)
