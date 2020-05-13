@@ -50,19 +50,19 @@ int main()
 	Colormap colormap;
 	colormap = DefaultColormap(dpy, DefaultScreen(dpy));
 
-	GC gc[OPACITY_MAX];
-	XColor screen_color[OPACITY_MAX];
-	XColor exact_color[OPACITY_MAX];
+	GC gc[OPACITY_MAX+1];
+	XColor screen_color[OPACITY_MAX+1];
+	XColor exact_color[OPACITY_MAX+1];
 	#define MAX_COLOR_NAME_SIZE 256
-	char *color_name[OPACITY_MAX];
+	char *color_name[OPACITY_MAX+1];
 
-	for (int i=0; i < OPACITY_MAX; i++) {
+	for (int i=0; i <= OPACITY_MAX; i++) {
 		color_name[i] = malloc(MAX_COLOR_NAME_SIZE+1);
 		snprintf( color_name[i], MAX_COLOR_NAME_SIZE,
 				"rgb:%02x/%02x/%02x",
-				255*(i+1)/OPACITY_MAX,
-				255*(i+1)/OPACITY_MAX,
-				255*(i+1)/OPACITY_MAX
+				255*(i)/OPACITY_MAX,
+				255*(i)/OPACITY_MAX,
+				255*(i)/OPACITY_MAX
 			);
 		#ifdef DEBUG
 		printf("Setup Color %i: %s\n", i, color_name[i]);
